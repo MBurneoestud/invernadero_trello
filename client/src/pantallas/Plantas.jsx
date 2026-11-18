@@ -1,7 +1,8 @@
-import { useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { listarPlantas, registrarPlanta, repartirErrores } from "../api.js";
 import Campo from "../componentes/Campo.jsx";
 import ListaVacia from "../componentes/ListaVacia.jsx";
+import PanelRiego from "../componentes/PanelRiego.jsx";
 import Mensaje from "../componentes/Mensaje.jsx";
 
 const CAMPOS = ["nombre", "especie", "ubicacion", "intervaloRiegoDias"];
@@ -20,6 +21,10 @@ export default function Plantas({ alAbrir }) {
   const [exito, setExito] = useState("");
   const [enviando, setEnviando] = useState(false);
   const primerCampo = useRef(null);
+  // Riego rápido (spec 03): un solo panel abierto y un solo mensaje de éxito.
+  const [panelAbierto, setPanelAbierto] = useState(null);
+  const [riegoGuardado, setRiegoGuardado] = useState(null);
+  const [regando, setRegando] = useState(false);
 
   useEffect(() => {
     listarPlantas()
@@ -32,6 +37,19 @@ export default function Plantas({ alAbrir }) {
 
   function cambiar(evento) {
     setDatos({ ...datos, [evento.target.name]: evento.target.value });
+  }
+
+  function pulsarRegar(id) {
+    setRiegoGuardado(null);
+    setPanelAbierto(panelAbierto === id ? null : id);
+  }
+
+  function riegoAnotado(planta) {
+    setPanelAbierto(null);
+    setRiegoGuardado({
+      id: planta._id,
+      texto: `Riego guardado para ${planta.nombre}.`,
+    });
   }
 
   async function enviar(evento) {
@@ -97,31 +115,76 @@ export default function Plantas({ alAbrir }) {
                 <th scope="col">Especie</th>
                 <th scope="col">Ubicación</th>
                 <th scope="col">Riego cada</th>
+                <th scope="col">Acción</th>
               </tr>
             </thead>
             <tbody>
-              {plantas.map((planta) => (
-                <tr key={planta._id}>
-                  <td data-etiqueta="Nombre">
-                    <a
-                      href={`#planta-${planta._id}`}
-                      className="enlace-planta"
-                      onClick={(evento) => {
-                        evento.preventDefault();
-                        alAbrir(planta);
-                      }}
+              {plantas.map((planta) => {
+                const abierto = panelAbierto === planta._id;
+                const guardado = riegoGuardado?.id === planta._id;
+                return (
+                  <Fragment key={planta._id}>
+                    <tr
+                      className={
+                        abierto || guardado ? "fila-con-panel" : undefined
+                      }
                     >
-                      {planta.nombre}
-                    </a>
-                  </td>
-                  <td data-etiqueta="Especie">{planta.especie}</td>
-                  <td data-etiqueta="Ubicación">{planta.ubicacion}</td>
-                  <td data-etiqueta="Riego cada">
-                    {planta.intervaloRiegoDias}{" "}
-                    {planta.intervaloRiegoDias === 1 ? "día" : "días"}
-                  </td>
-                </tr>
-              ))}
+                      <td data-etiqueta="Nombre">
+                        <a
+                          href={`#planta-${planta._id}`}
+                          className="enlace-planta"
+                          onClick={(evento) => {
+                            evento.preventDefault();
+                            alAbrir(planta);
+                          }}
+                        >
+                          {planta.nombre}
+                        </a>
+                      </td>
+                      <td data-etiqueta="Especie">{planta.especie}</td>
+                      <td data-etiqueta="Ubicación">{planta.ubicacion}</td>
+                      <td data-etiqueta="Riego cada">
+                        {planta.intervaloRiegoDias}{" "}
+                        {planta.intervaloRiegoDias === 1 ? "día" : "días"}
+                      </td>
+                      <td className="celda-accion">
+                        <button
+                          type="button"
+                          className="boton-secundario boton-regar"
+                          aria-label={`Regar ${planta.nombre}`}
+                          aria-expanded={abierto}
+                          aria-controls={
+                            abierto ? `panel-riego-${planta._id}` : undefined
+                          }
+                          disabled={regando && !abierto}
+                          onClick={() => pulsarRegar(planta._id)}
+                        >
+                          Regar
+                        </button>
+                      </td>
+                    </tr>
+                    {abierto && (
+                      <tr className="fila-panel">
+                        <td colSpan={5}>
+                          <PanelRiego
+                            planta={planta}
+                            alCancelar={() => setPanelAbierto(null)}
+                            alGuardar={() => riegoAnotado(planta)}
+                            alOcupar={setRegando}
+                          />
+                        </td>
+                      </tr>
+                    )}
+                    {guardado && (
+                      <tr className="fila-panel">
+                        <td colSpan={5}>
+                          <Mensaje tipo="exito">{riegoGuardado.texto}</Mensaje>
+                        </td>
+                      </tr>
+                    )}
+                  </Fragment>
+                );
+              })}
             </tbody>
           </table>
         )}

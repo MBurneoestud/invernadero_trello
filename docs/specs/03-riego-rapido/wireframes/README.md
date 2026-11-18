@@ -40,4 +40,4 @@ Cosas que deciden los wireframes y que los criterios no dicen:
 
 ## Pendiente para la spec
 
-- Qué hacer si falla la consulta del historial que necesita CA-1.8.7 (guardar sin avisar o tratarlo como error de conexión). No se dibuja como estado.
+- ~~Qué hacer si falla la consulta del historial que necesita CA-1.8.7~~: resuelto en la [spec](../spec.md). Se trata como error de conexión ([error-conexion-movil.svg](error-conexion-movil.svg)) y no se guarda.

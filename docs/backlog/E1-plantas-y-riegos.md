@@ -340,7 +340,7 @@ Como cuidador, quiero corregir o borrar un riego mal registrado, para que un err
 ### HU-1.8 · Registrar un riego rápido desde la lista
 Como cuidador, quiero registrar un riego desde la lista de plantas sin abrir su detalle, para anotarlo en segundos mientras recorro las mesas.
 
-- **Estado:** refinada, sin spec. No se implementa hasta que exista en `docs/specs/`.
+- **Estado:** con spec: [docs/specs/03-riego-rapido/spec.md](../specs/03-riego-rapido/spec.md).
 - **Alcance:** atajo de §4.2 desde la pantalla de §4.5. No añade reglas de negocio: usa las de HU-1.2.
 - **API:** `POST /api/riegos`, que ya existe (spec 01, X7). Para el aviso de CA-1.8.7 hace falta consultar el historial de la planta (`GET /api/plantas/:id/riegos`, también existente).
 
@@ -394,8 +394,8 @@ Como cuidador, quiero registrar un riego desde la lista de plantas sin abrir su 
   ENTONCES no se guarda todavía: ve en el panel «Mandrágora ya tiene un riego hoy. ¿Quieres anotar otro?» con las acciones «Sí, anotar otro» y «Cancelar». Con «Sí, anotar otro» se registra el riego como en CA-1.8.3; con «Cancelar» el panel se cierra y la planta no gana ningún riego.
 
 **Puntos abiertos antes de la spec:**
-- **Un solo botón primario por pantalla** (DESIGN.md): la lista ya tiene «Registrar una planta». Hay que decidir si «Guardar riego» es secundario o si el panel cuenta como zona aparte.
-- **Si no se puede comprobar el historial** para el aviso de CA-1.8.7 (falla la consulta pero no el registro): ¿se guarda sin avisar o se trata como error de conexión?
+- ~~**Un solo botón primario por pantalla**~~: resuelto en los wireframes. «Guardar riego» es secundario.
+- ~~**Si no se puede comprobar el historial**~~: resuelto (2026-11-18). Se trata como error de conexión y no se guarda (spec 03, CA-03.8).
 - **Dos riegos el mismo día:** CA-1.8.7 solo avisa en el riego rápido; el detalle (HU-1.2) sigue aceptándolos sin aviso. El caso borde de HU-1.2 sigue abierto para el resto de la app.
 - **Cobertura:** HU-1.8 no añade alcance al §4; si el cliente la quiere en el MVP, hay que anotarla en el PRD.
 
