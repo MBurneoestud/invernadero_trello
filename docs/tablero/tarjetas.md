@@ -3,7 +3,7 @@
 Archivo de carga para la skill `/tablero`. Cada tarjeta empieza con `## ` y una línea `Lista:`. En «Por hacer», el orden es la prioridad.
 
 ## Spec 04 · Validar la planta en el dominio
-Lista: Por hacer
+Lista: Hecho
 
 - **Historia:** HU-1.1 · Registrar una planta. **Deuda:** T-02 (backlog de E1, sección «Deuda técnica»).
 - **Objetivo:** las reglas de una planta nueva se comprueban en una función pura de `src/dominio/`, que la ruta usa antes de tocar la base de datos.
@@ -38,7 +38,7 @@ Lista: Por hacer
 `src/dominio/validaciones.js` (nuevo) · `test/dominio/validaciones.test.js` (nuevo) · `src/routes/plantas.js`
 
 ## Spec 05 · Validar el riego en el dominio
-Lista: Por hacer
+Lista: Hecho
 
 - **Historia:** HU-1.2 · Registrar un riego. **Deuda:** T-05.
 - **Objetivo:** las reglas de formato de un riego se comprueban en una función pura de `src/dominio/`, antes de buscar la planta en la base de datos.
@@ -73,7 +73,7 @@ Lista: Por hacer
 `src/dominio/validaciones.js` · `test/dominio/validaciones.test.js` · `src/routes/riegos.js`
 
 ## Spec 06 · Consultar una planta por su identificador
-Lista: Por hacer
+Lista: Hecho
 
 - **Historia:** HU-1.4 · Historial de riegos (apoyo). Hoy el frontend recibe los datos de la planta desde la lista; con este endpoint, el detalle puede pedirlos solo.
 - **Objetivo:** `GET /api/plantas/:id` devuelve una planta, con los mismos errores que el historial de riegos.
@@ -104,7 +104,7 @@ Lista: Por hacer
 `src/dominio/validaciones.js` · `test/dominio/validaciones.test.js` · `src/routes/plantas.js`
 
 ## Spec 03 · Registrar un riego rápido desde la lista
-Lista: Por hacer
+Lista: Hecho
 
 - **Historia:** HU-1.8 · Registrar un riego rápido desde la lista.
 - **Objetivo:** el cuidador anota un riego de hoy desde la pantalla «Plantas», sin abrir el detalle de la planta.

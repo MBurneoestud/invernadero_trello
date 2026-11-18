@@ -340,7 +340,7 @@ Como cuidador, quiero corregir o borrar un riego mal registrado, para que un err
 ### HU-1.8 · Registrar un riego rápido desde la lista
 Como cuidador, quiero registrar un riego desde la lista de plantas sin abrir su detalle, para anotarlo en segundos mientras recorro las mesas.
 
-- **Estado:** con spec: [docs/specs/03-riego-rapido/spec.md](../specs/03-riego-rapido/spec.md).
+- **Estado:** implementada. Spec: [docs/specs/03-riego-rapido/spec.md](../specs/03-riego-rapido/spec.md) (PR #4, 2026-11-18).
 - **Alcance:** atajo de §4.2 desde la pantalla de §4.5. No añade reglas de negocio: usa las de HU-1.2.
 - **API:** `POST /api/riegos`, que ya existe (spec 01, X7). Para el aviso de CA-1.8.7 hace falta consultar el historial de la planta (`GET /api/plantas/:id/riegos`, también existente).
 
