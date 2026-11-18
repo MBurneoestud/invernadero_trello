@@ -103,6 +103,16 @@ Lista: Por hacer
 
 `src/dominio/validaciones.js` · `test/dominio/validaciones.test.js` · `src/routes/plantas.js`
 
+## Spec 03 · Registrar un riego rápido desde la lista
+Lista: Por hacer
+
+- **Historia:** HU-1.8 · Registrar un riego rápido desde la lista.
+- **Objetivo:** el cuidador anota un riego de hoy desde la pantalla «Plantas», sin abrir el detalle de la planta.
+- **Spec:** `docs/specs/03-riego-rapido/spec.md`. **Wireframes:** `docs/specs/03-riego-rapido/wireframes/`.
+- **Criterios:** CA-1.8.1 a CA-1.8.7 y CA-03.8 (si falla la consulta del historial, error de conexión y no se guarda).
+- **Archivos:** `client/src/pantallas/Plantas.jsx` · `client/src/componentes/PanelRiego.jsx` (nuevo) · `client/src/formato.js` · `client/src/styles/app.css`. Sin cambios en el backend.
+- **Pendiente con el cliente:** anotar HU-1.8 en el PRD si entra al MVP.
+
 ## HU-2.1 · Ver las plantas que necesitan agua
 Lista: Backlog
 
