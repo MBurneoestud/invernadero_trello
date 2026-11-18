@@ -1,11 +1,18 @@
 // Reglas de formato puras, sin base de datos ni Mongoose.
-// Los mensajes coinciden con los del modelo Riego.
+// Los mensajes coinciden con los de los modelos Planta y Riego, que siguen
+// como segunda barrera.
 const { interpretarFecha, esFechaFutura } = require("./fechas");
 
 const ID_HEXADECIMAL = /^[0-9a-fA-F]{24}$/;
 
 const MENSAJE_CANTIDAD_ENTERA =
   "La cantidad de agua debe ser un número entero de mililitros";
+
+const TEXTOS_OBLIGATORIOS_PLANTA = [
+  ["nombre", "El nombre es obligatorio"],
+  ["especie", "La especie es obligatoria"],
+  ["ubicacion", "La ubicación es obligatoria"],
+];
 
 function esIdValido(valor) {
   return typeof valor === "string" && ID_HEXADECIMAL.test(valor);
@@ -15,7 +22,43 @@ function estaVacio(valor) {
   return valor === undefined || valor === null || valor === "";
 }
 
-function validarPlanta(planta) {
+// Un texto con solo espacios cuenta como vacío.
+function esTextoVacio(valor) {
+  return typeof valor !== "string" || valor.trim() === "";
+}
+
+function errorIntervalo(valor) {
+  if (estaVacio(valor)) {
+    return "El intervalo de riego es obligatorio";
+  }
+  if (typeof valor !== "number" || !Number.isInteger(valor)) {
+    return "El intervalo de riego debe ser un número entero de días";
+  }
+  if (valor < 1) {
+    return "El intervalo de riego debe ser de al menos 1 día";
+  }
+  return null;
+}
+
+function validarPlanta(datos) {
+  const planta = datos ?? {};
+  const detalles = [];
+
+  for (const [campo, mensaje] of TEXTOS_OBLIGATORIOS_PLANTA) {
+    if (esTextoVacio(planta[campo])) {
+      detalles.push({ campo, mensaje });
+    }
+  }
+
+  const mensajeIntervalo = errorIntervalo(planta.intervaloRiegoDias);
+  if (mensajeIntervalo) {
+    detalles.push({ campo: "intervaloRiegoDias", mensaje: mensajeIntervalo });
+  }
+
+  return detalles;
+}
+
+function validarIdPlanta(planta) {
   if (estaVacio(planta)) {
     return "La planta es obligatoria";
   }
@@ -73,7 +116,7 @@ function validarFecha(fecha, ahora) {
 function validarRiego(datos, ahora) {
   const { planta, cantidadMl, fecha } = datos ?? {};
   const comprobaciones = [
-    ["planta", validarPlanta(planta)],
+    ["planta", validarIdPlanta(planta)],
     ["fecha", validarFecha(fecha, ahora)],
     ["cantidadMl", validarCantidad(cantidadMl)],
   ];
@@ -82,4 +125,4 @@ function validarRiego(datos, ahora) {
     .map(([campo, mensaje]) => ({ campo, mensaje }));
 }
 
-module.exports = { esIdValido, validarRiego };
+module.exports = { esIdValido, validarPlanta, validarRiego };
