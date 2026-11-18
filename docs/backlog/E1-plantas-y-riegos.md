@@ -335,6 +335,70 @@ Como cuidador, quiero corregir o borrar un riego mal registrado, para que un err
 | 4.4 Historial de riegos | HU-1.4 |
 | 4.5 Lista de plantas | HU-1.5 |
 
+## Historias nuevas
+
+### HU-1.8 · Registrar un riego rápido desde la lista
+Como cuidador, quiero registrar un riego desde la lista de plantas sin abrir su detalle, para anotarlo en segundos mientras recorro las mesas.
+
+- **Estado:** refinada, sin spec. No se implementa hasta que exista en `docs/specs/`.
+- **Alcance:** atajo de §4.2 desde la pantalla de §4.5. No añade reglas de negocio: usa las de HU-1.2.
+- **API:** `POST /api/riegos`, que ya existe (spec 01, X7). Para el aviso de CA-1.8.7 hace falta consultar el historial de la planta (`GET /api/plantas/:id/riegos`, también existente).
+
+**Decisiones del cliente (2026-11-18):**
+- La cantidad sugerida es 500 ml y el cuidador puede cambiarla.
+- La fecha es siempre hoy; no se puede elegir otra. Para un riego olvidado está el detalle (HU-1.2).
+- No se pide cuidador; el riego queda «sin cuidador». Para indicarlo está el detalle.
+- El panel se despliega en línea, debajo de la fila (o tarjeta) de la planta, y solo hay uno abierto a la vez.
+- Si la planta ya tiene un riego con fecha de hoy, se avisa y se pide confirmar antes de guardar otro.
+
+**Reglas que aplican:**
+- D2 + D6: la cantidad se expresa en ml y debe ser mayor que 0. Las validaciones son las de la API, sin duplicarlas en el cliente.
+- 6.5 + §7 [SUPUESTO]: «hoy» es el día de calendario según la hora local del invernadero.
+- DESIGN.md: cada estado tiene su mensaje, zonas táctiles de 44 px como mínimo y mensajes de carga solo con texto.
+
+**Criterios de aceptación:**
+
+- **CA-1.8.1 · Panel abierto**
+  DADO la lista de plantas con «Mandrágora» y «Helecho lunar», y ningún panel abierto,
+  CUANDO el cuidador pulsa «Regar» en la fila de «Mandrágora»,
+  ENTONCES se despliega debajo de esa fila un panel con el nombre de la planta, el campo «Cantidad (ml)» con 500 ya escrito, la indicación de que el riego será de hoy y las acciones «Guardar riego» y «Cancelar»; no se le pide fecha ni cuidador. Si después pulsa «Regar» en «Helecho lunar», el panel de «Mandrágora» se cierra sin guardar nada y se abre el de «Helecho lunar». Si pulsa «Cancelar», el panel se cierra y no se registra ningún riego.
+
+- **CA-1.8.2 · Guardando**
+  DADO el panel de «Mandrágora» abierto con 500 ml,
+  CUANDO el cuidador pulsa «Guardar riego» y la API todavía no ha respondido,
+  ENTONCES ve el texto «Guardando riego…» en el panel, «Guardar riego» y el campo de cantidad quedan desactivados, y aunque pulse otra vez se envía un solo riego.
+
+- **CA-1.8.3 · Éxito**
+  DADO una planta «Mandrágora» sin riegos con fecha de hoy y su panel abierto con 500 ml,
+  CUANDO el cuidador pulsa «Guardar riego» y la API lo acepta,
+  ENTONCES el panel se cierra, ve junto a la fila el mensaje «Riego guardado para Mandrágora.», sigue en la lista en la misma posición de desplazamiento, y en el detalle de la planta aparece un riego de hoy con 500 ml y «sin cuidador».
+
+- **CA-1.8.4 · Error de validación junto al campo**
+  DADO el panel de «Mandrágora» abierto,
+  CUANDO el cuidador cambia la cantidad a 0 (o a −50, o a 2,5) y pulsa «Guardar riego»,
+  ENTONCES el panel sigue abierto con el valor que escribió, ve debajo del campo «Cantidad (ml)» el mensaje de la API tal como llega (por ejemplo «La cantidad de agua debe ser mayor que 0»), con icono y el campo con borde de error, y la planta no gana ningún riego. Al corregir la cantidad y volver a guardar, el mensaje desaparece. Un mensaje de la API que no corresponda a la cantidad (por ejemplo, de `planta`) se muestra arriba del panel, nunca como código HTTP.
+
+- **CA-1.8.5 · Error de conexión**
+  DADO el panel de «Mandrágora» abierto con 750 ml y la API detenida,
+  CUANDO el cuidador pulsa «Guardar riego»,
+  ENTONCES el panel sigue abierto con 750 ml, ve dentro del panel «No pudimos guardar el riego. Revisa que la API esté encendida y vuelve a intentarlo.», sin tecnicismos, y «Guardar riego» vuelve a estar activo para reintentar. Cuando la API vuelve y reintenta, se registra un solo riego.
+
+- **CA-1.8.6 · Uso en móvil a 390 px**
+  DADO la lista de plantas en una pantalla de 390 px de ancho, que se ve como tarjetas,
+  CUANDO el cuidador pulsa «Regar» en una tarjeta,
+  ENTONCES el panel se despliega dentro de esa tarjeta, cabe entero sin desplazamiento horizontal, el campo de cantidad abre el teclado numérico, «Regar», «Guardar riego» y «Cancelar» tienen al menos 44 px de alto, y los mensajes de CA-1.8.2 a CA-1.8.5 se leen completos sin cortarse.
+
+- **CA-1.8.7 · La planta ya tiene un riego hoy**
+  DADO una planta «Mandrágora» que ya tiene un riego con fecha de hoy,
+  CUANDO el cuidador abre su panel y pulsa «Guardar riego»,
+  ENTONCES no se guarda todavía: ve en el panel «Mandrágora ya tiene un riego hoy. ¿Quieres anotar otro?» con las acciones «Sí, anotar otro» y «Cancelar». Con «Sí, anotar otro» se registra el riego como en CA-1.8.3; con «Cancelar» el panel se cierra y la planta no gana ningún riego.
+
+**Puntos abiertos antes de la spec:**
+- **Un solo botón primario por pantalla** (DESIGN.md): la lista ya tiene «Registrar una planta». Hay que decidir si «Guardar riego» es secundario o si el panel cuenta como zona aparte.
+- **Si no se puede comprobar el historial** para el aviso de CA-1.8.7 (falla la consulta pero no el registro): ¿se guarda sin avisar o se trata como error de conexión?
+- **Dos riegos el mismo día:** CA-1.8.7 solo avisa en el riego rápido; el detalle (HU-1.2) sigue aceptándolos sin aviso. El caso borde de HU-1.2 sigue abierto para el resto de la app.
+- **Cobertura:** HU-1.8 no añade alcance al §4; si el cliente la quiere en el MVP, hay que anotarla en el PRD.
+
 ## Decisiones del cliente (2026-11-04)
 
 | # | Decisión |
