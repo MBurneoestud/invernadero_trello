@@ -26,3 +26,13 @@ export function hoyIso() {
   const dia = String(hoy.getDate()).padStart(2, "0");
   return `${hoy.getFullYear()}-${mes}-${dia}`;
 }
+
+// ¿La fecha cae en el mismo día de calendario que «ahora», en hora local?
+export function esDeHoy(valor, ahora) {
+  const fecha = new Date(valor);
+  return (
+    fecha.getFullYear() === ahora.getFullYear() &&
+    fecha.getMonth() === ahora.getMonth() &&
+    fecha.getDate() === ahora.getDate()
+  );
+}

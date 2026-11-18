@@ -308,3 +308,103 @@ form {
     font-size: 18px;
   }
 }
+
+/* Riego rápido (spec 03) */
+.celda-accion {
+  width: 1%;
+  white-space: nowrap;
+}
+
+.boton-regar {
+  padding: var(--espacio-2) var(--espacio-4);
+  font-size: 16px;
+}
+
+.boton-regar[aria-expanded="true"] {
+  background: var(--color-fondo);
+}
+
+.boton-secundario:disabled {
+  border-color: var(--color-borde-campo);
+  color: var(--color-texto-secundario);
+  cursor: not-allowed;
+}
+
+.tabla-plantas .fila-panel td {
+  border-top: none;
+  padding-top: 0;
+}
+
+.panel-riego {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-3);
+  padding: var(--espacio-4);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-tarjeta);
+}
+
+.panel-riego-titulo {
+  margin: 0;
+  font-family: var(--fuente-titulos);
+  font-weight: 600;
+  font-size: 18px;
+}
+
+.panel-riego .mensaje {
+  margin-bottom: 0;
+}
+
+.panel-riego-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--espacio-3);
+}
+
+.aviso-neutro {
+  padding: var(--espacio-3) var(--espacio-4);
+  background: var(--color-fondo);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-tarjeta);
+}
+
+.aviso-neutro p:first-child {
+  font-weight: 700;
+}
+
+@media (max-width: 639px) {
+  .tabla-plantas td.celda-accion {
+    width: auto;
+    padding-top: var(--espacio-3);
+    white-space: normal;
+  }
+
+  .tabla-plantas td.celda-accion::before {
+    content: none;
+  }
+
+  .boton-regar {
+    width: 100%;
+  }
+
+  /* El panel y el mensaje se ven dentro de la tarjeta de su planta. */
+  .tabla-plantas tr.fila-con-panel {
+    margin-bottom: 0;
+    border-bottom: none;
+    border-radius: var(--radio-tarjeta) var(--radio-tarjeta) 0 0;
+  }
+
+  .tabla-plantas tr.fila-panel {
+    padding-top: var(--espacio-3);
+    border-top: none;
+    border-radius: 0 0 var(--radio-tarjeta) var(--radio-tarjeta);
+  }
+
+  .tabla-plantas .fila-panel td::before {
+    content: none;
+  }
+
+  .panel-riego-acciones .boton-secundario {
+    flex: 1 1 auto;
+  }
+}

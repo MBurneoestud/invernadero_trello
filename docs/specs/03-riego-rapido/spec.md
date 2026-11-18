@@ -64,7 +64,9 @@ Son los CA-1.8.1 a CA-1.8.7 de HU-1.8, más uno para la decisión de esta spec:
 | CA-1.8.2 y CA-1.8.5 (un solo riego) | Pestaña Red del navegador, con la conexión limitada: un solo `POST /api/riegos` por guardado |
 | CA-1.8.6 | Herramientas de desarrollo a 390 px y revisión del diff: `inputmode="numeric"` y altura mínima de 44 px |
 | CA-03.8 | Pestaña Red: bloquear `/api/plantas/*/riegos` y comprobar que no sale ningún `POST` |
-| `esDeHoy` | Revisión del diff: función pura, sin `Date.now()` dentro, y `ahora` recibido como parámetro |
+| `esDeHoy` | Tests en `test/cliente/formato.test.mjs`. Revisión del diff: función pura y `ahora` recibido como parámetro |
+| CA-1.8.3, CA-1.8.4, CA-1.8.5, CA-1.8.7 y CA-03.8 (flujo) | Tests en `test/cliente/riegoRapido.test.mjs`, con una API falsa que cuenta las llamadas |
+| Estados en pantalla | Capturas en `capturas/`, comparadas con los wireframes |
 | Diseño | Revisión contra DESIGN.md y los wireframes: solo tokens, un solo botón primario, estados de carga solo con texto |
 | Backend sin cambios | `npm test` pasa y el diff no toca `src/` |
 
@@ -75,7 +77,9 @@ Son los CA-1.8.1 a CA-1.8.7 de HU-1.8, más uno para la decisión de esta spec:
 | `client/src/pantallas/Plantas.jsx` | Botón «Regar», columna «Acción» y estado del panel abierto |
 | `client/src/componentes/PanelRiego.jsx` (nuevo) | El panel con sus estados |
 | `client/src/formato.js` | `esDeHoy(fecha, ahora)` |
+| `client/src/riegoRapido.js` (nuevo) | `guardarRiegoRapido`: consulta el historial, decide si avisar, envía el riego y reparte los errores. Recibe las llamadas a la API como parámetros para poder probarlo |
 | `client/src/styles/app.css` | Estilos del panel, la columna y el «Regar» abierto, solo con variables |
+| `test/cliente/formato.test.mjs` y `riegoRapido.test.mjs` (nuevos) | Tests de `esDeHoy` y del flujo de guardado |
 
 Usa sin cambios `listarRiegos`, `registrarRiego` y `repartirErrores` de `client/src/api.js`.
 
@@ -84,4 +88,12 @@ Usa sin cambios `listarRiegos`, `registrarRiego` y `repartirErrores` de `client/
 - **NO DEBE** cambiar el backend ni el detalle de la planta: el detalle sigue aceptando dos riegos el mismo día sin avisar (caso borde abierto de HU-1.2).
 - **NO DEBE** permitir elegir la fecha ni el cuidador desde el panel. Para eso está el detalle.
 - **NO DEBE** usar librerías de UI, de CSS ni de rutas.
-- Sin tests automáticos del frontend, igual que en la spec 02.
+- Sin tests automáticos de los componentes React: la lógica que se puede probar está en `formato.js` y `riegoRapido.js`, y lo demás se comprueba en el navegador.
+
+## Pendientes
+
+- **Captura del error de conexión:** no se sacó, porque hace falta detener la API y la que corría era la de desarrollo. El flujo está cubierto por los tests (CA-1.8.5 y CA-03.8) y el mensaje es el del wireframe. Falta comprobarlo en el navegador con la API apagada.
+- **Panel dentro de la tarjeta:** el panel tiene su propio borde dentro de la tarjeta. Coincide con la estructura del wireframe, pero conviene revisarlo en la revisión de diseño.
+- **Datos de desarrollo:** las capturas de éxito y de aviso añadieron riegos de hoy a «Mandrágora» y «Menta» en la base de desarrollo. Algunas plantas de esa base tienen nombres con caracteres rotos («Mandr�gora»), que vienen de pruebas anteriores y no de esta spec.
+- **Skill `siguiente-spec`:** pide `npm run captura`, pero `package.json` no tiene ese script. Las capturas se sacaron con `node scripts/captura.js`.
+- **Cobertura:** si el cliente quiere HU-1.8 en el MVP, hay que anotarla en el PRD.
