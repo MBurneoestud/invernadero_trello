@@ -224,10 +224,10 @@ Los criterios de aceptación todavía no cubren estas situaciones. Hay que decid
   - [x] Se rechaza un intervalo que no sea un número entero o que sea menor que 1 (regla 6.1).
   - [x] Cada planta guarda su fecha de registro (regla 6.2).
   - [x] Los errores indican qué dato falla, y si faltan varios datos se informa de todos.
-  - [ ] Las reglas que no dependen de la base de datos están en `src/dominio/` como funciones puras y tienen tests unitarios.
+  - [x] Las reglas que no dependen de la base de datos están en `src/dominio/` como funciones puras y tienen tests unitarios.
   - [x] `npm test` pasa.
 - **Dependencias:** T-01.
-- **Estado:** pendiente. Las validaciones de la planta están en el modelo de Mongoose, no en `src/dominio/` como funciones puras.
+- **Estado:** hecho (spec 04). `validarPlanta` está en `src/dominio/validaciones.js`, con tests en `test/dominio/validaciones.test.js`. `POST /api/plantas` la usa antes de tocar la base de datos, y el modelo sigue como segunda barrera.
 
 #### T-03 · Registrar una planta por la API
 - **Historia:** HU-1.1. **Tipo:** Endpoint/API.
@@ -264,10 +264,10 @@ Los criterios de aceptación todavía no cubren estas situaciones. Hay que decid
   - [ ] Se aceptan cantidades con decimales y se rechaza una cantidad de 0 o negativa (regla 6.10).
   - [x] Se acepta una fecha pasada desde el día de registro de la planta, y se rechaza una fecha futura o anterior a ese día (regla 6.4, D5).
   - [x] Las fechas se comparan como días de calendario y se ignora la hora (regla 6.5), así que un riego el mismo día del registro de la planta se acepta.
-  - [ ] Las reglas de fechas y cantidad están en `src/dominio/` como funciones puras y tienen tests unitarios, incluidos los casos alrededor de la medianoche.
+  - [x] Las reglas de fechas y cantidad están en `src/dominio/` como funciones puras y tienen tests unitarios, incluidos los casos alrededor de la medianoche.
   - [x] `npm test` pasa.
 - **Dependencias:** T-01, T-02.
-- **Estado:** pendiente. La cantidad se guarda en ml enteros (spec X1), no en litros con decimales, y su validación está en el modelo, no en `src/dominio/`.
+- **Estado:** hecho (spec 05). `validarRiego` está en `src/dominio/validaciones.js`, con tests en `test/dominio/validaciones.test.js` (incluido el caso de medianoche, CA-05.4). Las dos casillas sin marcar, de litros y decimales, no aplican: D6 y la spec X1 fijan la cantidad en ml enteros.
 
 #### T-06 · Registrar un riego por la API
 - **Historia:** HU-1.2. **Tipo:** Endpoint/API.
@@ -409,7 +409,7 @@ Como cuidador, quiero registrar un riego desde la lista de plantas sin abrir su 
 
 ## Deuda técnica
 
-- T-02 y T-05: las validaciones de planta y riego están en los modelos de Mongoose, no en `src/dominio/` como funciones puras.
+- ~~T-02 y T-05: las validaciones de planta y riego están en los modelos de Mongoose, no en `src/dominio/` como funciones puras.~~ Resuelto con las specs 04 y 05.
 - T-04 y T-07: los tests no comprueban que un rechazo deja sin crear la planta o el riego.
 - T-07: CA-1.2.5 (planta inexistente) solo se verificó con curl; no tiene test automático.
 - T-01, T-04 y T-07: quitar de la DoD la base de datos aislada, que ya no aplica (spec 01, X9).
