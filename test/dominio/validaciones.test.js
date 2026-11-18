@@ -1,6 +1,6 @@
 const { describe, test } = require("node:test");
 const assert = require("node:assert/strict");
-const { validarRiego } = require("../../src/dominio/validaciones");
+const { esIdValido, validarRiego } = require("../../src/dominio/validaciones");
 
 // Las fechas se construyen en hora local para que los tests no dependan de TZ.
 const ahora = new Date(2026, 9, 28, 10, 0);
@@ -106,5 +106,25 @@ describe("validarRiego", () => {
       { campo: "planta", mensaje: "La planta es obligatoria" },
       { campo: "cantidadMl", mensaje: "La cantidad de agua es obligatoria" },
     ]);
+  });
+});
+
+describe("esIdValido", () => {
+  test("CA-06.1: 24 caracteres hexadecimales es válido", () => {
+    assert.equal(esIdValido("665f1c2a9b1e8a0012345678"), true);
+  });
+
+  for (const valor of ["123", "", null]) {
+    test(`CA-06.1: ${JSON.stringify(valor)} no es válido`, () => {
+      assert.equal(esIdValido(valor), false);
+    });
+  }
+
+  test("24 caracteres no hexadecimales no es válido", () => {
+    assert.equal(esIdValido("zzzzzzzzzzzzzzzzzzzzzzzz"), false);
+  });
+
+  test("un valor que no es texto no es válido", () => {
+    assert.equal(esIdValido(665112345678), false);
   });
 });

@@ -7,6 +7,10 @@ const ID_HEXADECIMAL = /^[0-9a-fA-F]{24}$/;
 const MENSAJE_CANTIDAD_ENTERA =
   "La cantidad de agua debe ser un número entero de mililitros";
 
+function esIdValido(valor) {
+  return typeof valor === "string" && ID_HEXADECIMAL.test(valor);
+}
+
 function estaVacio(valor) {
   return valor === undefined || valor === null || valor === "";
 }
@@ -15,7 +19,7 @@ function validarPlanta(planta) {
   if (estaVacio(planta)) {
     return "La planta es obligatoria";
   }
-  if (typeof planta !== "string" || !ID_HEXADECIMAL.test(planta)) {
+  if (!esIdValido(planta)) {
     return "La planta no tiene un identificador válido";
   }
   return null;
@@ -78,4 +82,4 @@ function validarRiego(datos, ahora) {
     .map(([campo, mensaje]) => ({ campo, mensaje }));
 }
 
-module.exports = { validarRiego };
+module.exports = { esIdValido, validarRiego };
